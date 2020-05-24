@@ -8,7 +8,7 @@ There's only two companies right now.
 # How to play
 From the first prompt, type `buy`, `sell`, or press Enter.
 
-If you pressed enter, the game will progress to the next turn.
+If you pressed enter, the game will progress to the next turn, and the stock prices will fluctuate.
 
 If you typed `buy`, type the name of the stock you want to buy (`nasdaq` or `aapl`). Then, specify the number of shares you want to buy. Type `max` to buy as many as you can afford.
 
