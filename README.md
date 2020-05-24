@@ -6,7 +6,7 @@ Probably very buggy.
 There's only two companies right now.
 
 # How to play
-From the first prompt, type `buy`, `sell`, or press Enter.
+From the first prompt, type `buy`, `sell`, or press Enter. (All names and commands are case insensitive)
 
 If you pressed enter, the game will progress to the next turn, and the stock prices will fluctuate.
 
