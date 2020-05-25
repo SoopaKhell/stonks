@@ -2,6 +2,7 @@ import random
 import strutils
 import tables
 import terminal
+import os
 
 randomize()
 
@@ -25,19 +26,25 @@ proc nextPrice(s: var Stock) =
       increase = s.direction*rand(2 .. 12)
     else:
       increase = s.direction*rand(1 .. 6)
+    if 40000.0*(1/s.price) >= s.price.toFloat:
+      increase += toInt(200.0*(1/s.price))
+    else:
+      increase -= toInt(s.price.toFloat/200.0)
     s.price += increase
     inc s.progress
   else:
-    s.direction = sample([1, -1])
-    s.duration = rand(2 .. 5)
+    s.direction = sample([1, 1, 1, 1, -1, -1, -1])
+    s.duration = rand(2 .. 10)
     s.progress = 0
     s.nextPrice()
+  if s.price <= 0:
+    s.price = 1
 
 proc printStock(s: Stock) =
-  echo s.name, ": $", s.price, " (", s.stocks, ")"
+    echo s.name, " ".repeat(7 - len(s.name)), "█".repeat(s.price div 10), " $", s.price, " (", s.stocks, ") "
 
 proc printMoney(p: Player) =
-  echo "your money: $", p.money
+  echo "Your money: $", p.money
 
 proc buy(s: var Stock, p: var Player, amount: int) =
   s.stocks += amount
@@ -67,8 +74,6 @@ var player = Player(money: 2000)
 
 var choice: string
 var amnt: string
-
-
 
 proc promptUser() =
   player.printMoney()
@@ -118,32 +123,47 @@ proc promptUser() =
     choice = readLine(stdin).toLowerAscii()
 
     if choice == stocc.name.toLowerAscii():
-      write(stdout, "how many (all?): ")
-      amnt = readLine(stdin).toLowerAscii()
- 
-      if isNumber(amnt):
-        sell(stocc, player, parseInt(amnt))
-      elif amnt == "all":
-        sell(stocc, player, stocc.stocks)
+      if player.stocks.hasKey(stocc.name):
+        if player.stocks[stocc.name] > 0:
+          write(stdout, "how many (max?): ")
+          amnt = readLine(stdin).toLowerAscii()
+     
+          if isNumber(amnt):
+            sell(stocc, player, parseInt(amnt))
+          elif amnt == "max":
+            sell(stocc, player, stocc.stocks)
+          else:
+            echo "\"", amnt, "\" is not a number."
+            promptUser()
+        else:
+          echo "You don't have any shares in that company!"
+          promptUser()
       else:
-        echo "\"", amnt, "\" is not a number."
-        promptUser()
-
+          echo "You don't have any shares in that company!(2)"
+          promptUser()
     elif choice == stocc2.name.toLowerAscii():
-      write(stdout, "how many (all?): ")
-      amnt = readLine(stdin).toLowerAscii()
- 
-      if isNumber(amnt):
-        sell(stocc2, player, parseInt(amnt))
-      elif amnt == "all":
-        sell(stocc2, player, stocc2.stocks)
+      if player.stocks.hasKey(stocc2.name):
+        if player.stocks[stocc2.name] > 0:
+          write(stdout, "how many (max?): ")
+          amnt = readLine(stdin).toLowerAscii()
+     
+          if isNumber(amnt):
+            sell(stocc2, player, parseInt(amnt))
+          elif amnt == "max":
+            sell(stocc2, player, stocc2.stocks)
+          else:
+            echo "\"", amnt, "\" is not a number."
+            promptUser()
+        else:
+          echo "You don't have any shares in that company!"
+          promptUser()
       else:
-        echo "\"", amnt, "\" is not a number."
+        echo "You don't have any shares in that company! (2)"
         promptUser()
     else:
       echo "\"", choice, "\" is not a stock."
       promptUser()
-while true: 
+while true:
   eraseScreen()
 
   promptUser()
